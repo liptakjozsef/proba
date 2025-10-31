@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Clock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: black; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'Noto Sans SC', sans-serif; color: white; }
+  .clock { font-size: 24px; margin: 10px 0; text-align: center; }
+</style>
+</head>
+<body>
+
+<div id="tokio" class="clock"></div>
+<div id="london" class="clock"></div>
+<div id="york" class="clock"></div>
+
+<script>
+const cities = [
+  { name: 'Tokió', offset: 8, elementId: 'tokio' },
+  { name: 'London', offset: -1, elementId: 'london' },
+  { name: 'New York', offset: -6, elementId: 'york' }
+];
+
+function pad(num) {
+  return num.toString().padStart(2, '0');
+}
+
+function updateClocks() {
+  const now = new Date();
+
+  cities.forEach(city => {
+    let hours = now.getHours() + city.offset;
+    if (hours < 0) hours += 24;
+    if (hours >= 24) hours -= 24;
+
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    const display = `${city.name}  ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    document.getElementById(city.elementId).textContent = display;
+
+    // New York óránál változik a háttérszín
+    if (city.name === 'New York') {
+      document.body.style.background = `#${pad(hours)}${pad(minutes)}${pad(seconds)}`;
+    }
+  });
+
+  setTimeout(updateClocks, 1000);
+}
+
+updateClocks();
+</script>
+
+</body>
+</html>
