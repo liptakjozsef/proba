@@ -9,21 +9,49 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; background: black; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'Noto Sans SC', sans-serif; color: white; }
-  .clock { font-size: 24px; margin: 10px 0; text-align: center; }
+
+  html, body {
+    height: 100%;
+    background: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: white;
+  }
+
+  .title {
+    font-size: 32px;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+  }
+
+  .clock {
+    font-size: 24px;
+    margin: 10px 0;
+    text-align: center;
+    width: 60vw;           /* kétszer szélesebb, mint korábban */
+    padding: 10px 0;
+    border-radius: 8px;
+    background-color: rgba(255,255,255,0.1); /* halvány háttér a színes hatás miatt */
+    transition: background 0.5s;
+  }
 </style>
 </head>
 <body>
 
-<div id="tokio" class="clock"></div>
-<div id="london" class="clock"></div>
-<div id="york" class="clock"></div>
+<div class="title">El Camino</div>
+
+<div id="bp" class="clock"></div>
+<div id="madrid" class="clock"></div>
+<div id="lisbon" class="clock"></div>
 
 <script>
 const cities = [
-  { name: 'Tokió', offset: 8, elementId: 'tokio' },
-  { name: 'London', offset: -1, elementId: 'london' },
-  { name: 'New York', offset: -6, elementId: 'york' }
+  { name: 'Budapest', offset: 1, elementId: 'bp' },
+  { name: 'Madrid', offset: 0, elementId: 'madrid' },
+  { name: 'Lisbon', offset: 0, elementId: 'lisbon' }
 ];
 
 function pad(num) {
@@ -34,20 +62,19 @@ function updateClocks() {
   const now = new Date();
 
   cities.forEach(city => {
-    let hours = now.getHours() + city.offset;
+    let hours = now.getUTCHours() + city.offset;
     if (hours < 0) hours += 24;
     if (hours >= 24) hours -= 24;
 
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
+    const minutes = now.getUTCMinutes();
+    const seconds = now.getUTCSeconds();
 
     const display = `${city.name}  ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-    document.getElementById(city.elementId).textContent = display;
+    const el = document.getElementById(city.elementId);
+    el.textContent = display;
 
-    // New York óránál változik a háttérszín
-    if (city.name === 'New York') {
-      document.body.style.background = `#${pad(hours)}${pad(minutes)}${pad(seconds)}`;
-    }
+    // Mindhárom város sávja kicsit különböző árnyalatú
+    el.style.backgroundColor = `hsl(${hours * 15}, 70%, 40%)`;
   });
 
   setTimeout(updateClocks, 1000);
